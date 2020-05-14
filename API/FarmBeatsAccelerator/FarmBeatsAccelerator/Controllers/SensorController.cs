@@ -7,19 +7,21 @@ using Microsoft.AspNetCore.Mvc;
 using FarmBeatsAccelerator.Classes;
 using FarmBeatsAccelerator.Services;
 using FarmBeatsAccelerator.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Identity.Web;
 namespace FarmBeatsAccelerator.Controllers
 {
+    [Authorize]
     [Route("[Controller]")]
     [ApiController]
-    public class SensorController : ControllerBase
+    public class SensorController : Controller
     {
         // GET: Sensor
         [HttpGet]
         public List<Sensor> Get()
         {
             
-            SensorServices.GetSensors("a");
-            return new List<Sensor>();
+            return SensorServices.GetSensors();
         }
 
         // GET: Sensor/5
