@@ -49,12 +49,11 @@ namespace FarmBeatsAccelerator.Services
             return AuthToken;
         }
 
-        public static List<Sensor> GetSensors(string AuthToken)
+        public static List<Sensor> GetSensors()
         {
             var client = new RestClient("https://ndsufarmbeats-api.azurewebsites.net/Sensor");
             client.Timeout = -1;
             var request = new RestRequest(Method.GET);
-            request.AddHeader("Authorization", "Bearer " + AuthToken);
             IRestResponse response = client.Execute(request);
             List<Sensor> returnList = new List<Sensor>();
             SensorMapping SM = JsonSerializer.Deserialize<SensorMapping>(response.Content);
@@ -74,7 +73,7 @@ namespace FarmBeatsAccelerator.Services
 
         public static Sensor UpdateLocation(string AuthToken, string SensorName, double longitude, double latitude)
         {
-            List<Sensor> findSensor = GetSensors(AuthToken);
+            List<Sensor> findSensor = GetSensors();
             Sensor updateSensor = new Sensor();
             foreach (Sensor x in findSensor)
             {
@@ -89,14 +88,12 @@ namespace FarmBeatsAccelerator.Services
             //Add a put request to Sensor to update the location of the sensor
             return updateSensor;
         }
-        static List<double> getDataList(string AuthToken, String id, string value)
+        static List<double> getDataList(String id, string value)
         {
             var client = new RestClient("https://ndsufarmbeats-api.azurewebsites.net/Telemetry");
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Authorization", "Bearer " + AuthToken);
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Cookie", "AppServiceAuthSession=WI9t5DX8yaydnIOu3TbF/yzFkftvQ7W53n4YbnQ3tCSclMMjRR2KekmyDvE3BzEjQYzqQEAmdbfIFIuUpGdXgNQWapMIDyl8cA51B6EzPvRcoTQ1LHOgpJ1dse5APKcSQs6XXXlwuIL9++AokoTiLbJgz66i7SEJGYf44mDdusOPDa7tWo8Yt7MxznlTXWENBaUk4Ci6bnJXLApF1BWNpnX2tppgx87jbTyzzFlNSThMFe/dUlRG+Fye5YZVA93x0gwiGomMkpcnxocCi9q/ojy7dkQ9veh/kNvWhJ56SD/22rmKeyYajsF0z02rnY+ynYsdOhAa2EBWH2Nx9PtUcmXmIcdHbKvz2SRwgHKqfVNdlOm3NLXCUomYFv1+gDKt9PDjTA6jm+/ZS2t8hCk2DcQdbnqiMtTcqmkyqNcfOEHGfVeZUIL8PuxuM1nQ4izFfHaqWVCcM6hk1+8XK/L72vjOh3O9w8D8D4VyZ47GL66P/6i3V1xVkuuDSJLRoyA+FWtspase2KuvplUq6RVADhNWtBVRngqGHhnnOtYLSYk5m6tKd59Bja180m02TGxlP6jmfkw05TM8AwBFYYgDGFZOE3k/Mdq1MURxplxUEm62+GvBvp1HbbiZKW4UvMfYNmKn5YnuR62tDBHhEwzbh2Kphr2FhmRuYNWeFw0xpCAX6rB9vXG5zl7dLfRcma3urdbp2pEIZcVDJ3GINAoukfFqTgy5/ibTX4ZImyaOsdEs4n45IRK7qu6FhI9OCi2jESUh2XmF6fSYxX/D+lPt9cMXpSq7xin6NDQZqF5RZklW6gr/vcn194hJtzriyPqx7mIv8x1SYp0XAg4fj6vVypJ5ww95FFGGuDvPNzqBSMICGY4KA3O4UpQrg5+OtpKKBdVXHHpm2Tx5cTkOhREEqIrWN1yIQRorxVArChKsy5cQj87eBHI475zq+uirUMeRB2r5XZz1M++BeAVk+O0d/ek/NR1KgMb6ZjzkT56oiSI3niZ8FrBkMVr4/O4qXntU6S8HkAK/yvzZ9IPrKrRL3w==");
             request.AddParameter("application/json", "{\r\n  \"sensorId\": \"" + id + "\",\r\n  \"searchSpan\": {\r\n    \"from\": \"2020-04-10T17:02:53.969Z\",\r\n    \"to\": \"2020-04-29T17:02:53.970Z\"\r\n  },\r\n  \"projectedProperties\": [\r\n    {\r\n      \"name\":\"" + value + "\",\r\n      \"type\":\"Double\"\r\n    }\r\n  ]\r\n}", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
             List<double> returnList = new List<double>();
@@ -111,14 +108,12 @@ namespace FarmBeatsAccelerator.Services
             }
             return returnList;
         }
-        static List<DateTime> getTimeList(string AuthToken, String id)
+        static List<DateTime> getTimeList(String id)
         {
             var client = new RestClient("https://ndsufarmbeats-api.azurewebsites.net/Telemetry");
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Authorization", "Bearer " + AuthToken);
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Cookie", "AppServiceAuthSession=WI9t5DX8yaydnIOu3TbF/yzFkftvQ7W53n4YbnQ3tCSclMMjRR2KekmyDvE3BzEjQYzqQEAmdbfIFIuUpGdXgNQWapMIDyl8cA51B6EzPvRcoTQ1LHOgpJ1dse5APKcSQs6XXXlwuIL9++AokoTiLbJgz66i7SEJGYf44mDdusOPDa7tWo8Yt7MxznlTXWENBaUk4Ci6bnJXLApF1BWNpnX2tppgx87jbTyzzFlNSThMFe/dUlRG+Fye5YZVA93x0gwiGomMkpcnxocCi9q/ojy7dkQ9veh/kNvWhJ56SD/22rmKeyYajsF0z02rnY+ynYsdOhAa2EBWH2Nx9PtUcmXmIcdHbKvz2SRwgHKqfVNdlOm3NLXCUomYFv1+gDKt9PDjTA6jm+/ZS2t8hCk2DcQdbnqiMtTcqmkyqNcfOEHGfVeZUIL8PuxuM1nQ4izFfHaqWVCcM6hk1+8XK/L72vjOh3O9w8D8D4VyZ47GL66P/6i3V1xVkuuDSJLRoyA+FWtspase2KuvplUq6RVADhNWtBVRngqGHhnnOtYLSYk5m6tKd59Bja180m02TGxlP6jmfkw05TM8AwBFYYgDGFZOE3k/Mdq1MURxplxUEm62+GvBvp1HbbiZKW4UvMfYNmKn5YnuR62tDBHhEwzbh2Kphr2FhmRuYNWeFw0xpCAX6rB9vXG5zl7dLfRcma3urdbp2pEIZcVDJ3GINAoukfFqTgy5/ibTX4ZImyaOsdEs4n45IRK7qu6FhI9OCi2jESUh2XmF6fSYxX/D+lPt9cMXpSq7xin6NDQZqF5RZklW6gr/vcn194hJtzriyPqx7mIv8x1SYp0XAg4fj6vVypJ5ww95FFGGuDvPNzqBSMICGY4KA3O4UpQrg5+OtpKKBdVXHHpm2Tx5cTkOhREEqIrWN1yIQRorxVArChKsy5cQj87eBHI475zq+uirUMeRB2r5XZz1M++BeAVk+O0d/ek/NR1KgMb6ZjzkT56oiSI3niZ8FrBkMVr4/O4qXntU6S8HkAK/yvzZ9IPrKrRL3w==");
             request.AddParameter("application/json", "{\r\n  \"sensorId\": \"" + id + "\",\r\n  \"searchSpan\": {\r\n    \"from\": \"2020-04-10T17:02:53.969Z\",\r\n    \"to\": \"2020-04-29T17:02:53.970Z\"\r\n  },\r\n  \"projectedProperties\": [\r\n    {\r\n      \"name\":\"" + "soil_temperature" + "\",\r\n      \"type\":\"Double\"\r\n    }\r\n  ]\r\n}", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
             List<DateTime> returnList = new List<DateTime>();
@@ -130,34 +125,34 @@ namespace FarmBeatsAccelerator.Services
             }
             return returnList;
         }
-        public static List<Sensor> GetApiData(string AuthToken)
+        public static List<Sensor> GetApiData()
         {
-            List<Sensor> sensorList = GetSensors(AuthToken);
+            List<Sensor> sensorList = GetSensors();
             List<Sensor> returnList = new List<Sensor>();
             foreach (Sensor x in sensorList)
             {
-                List<double> bme280_temperature = getDataList(AuthToken, x.id, "bme280_temperature");
-                List<double> bme280_humidity = getDataList(AuthToken, x.id, "bme280_humidity");
-                List<double> bme280_pressure = getDataList(AuthToken, x.id, "bme280_pressure");
-                List<double> soil_moisture = getDataList(AuthToken, x.id, "soil_moisture");
-                List<double> soil_temperature = getDataList(AuthToken, x.id, "soil_temperature");
-                List<double> ambient_temperature = getDataList(AuthToken, x.id, "ambient_temperature");
-                List<double> ambient_humidity = getDataList(AuthToken, x.id, "ambient_humidity");
-                List<double> atmospheric_pressure = getDataList(AuthToken, x.id, "atmospheric_pressure");
-                List<double> light = getDataList(AuthToken, x.id, "light");
-                List<double> wind_speed = getDataList(AuthToken, x.id, "wind_speed");
-                List<double> wind_direction = getDataList(AuthToken, x.id, "wind_direction");
-                List<double> battery_level = getDataList(AuthToken, x.id, "battery_level");
+                List<double> bme280_temperature = getDataList(x.id, "bme280_temperature");
+                List<double> bme280_humidity = getDataList(x.id, "bme280_humidity");
+                List<double> bme280_pressure = getDataList(x.id, "bme280_pressure");
+                List<double> soil_moisture = getDataList(x.id, "soil_moisture");
+                List<double> soil_temperature = getDataList(x.id, "soil_temperature");
+                List<double> ambient_temperature = getDataList(x.id, "ambient_temperature");
+                List<double> ambient_humidity = getDataList(x.id, "ambient_humidity");
+                List<double> atmospheric_pressure = getDataList(x.id, "atmospheric_pressure");
+                List<double> light = getDataList(x.id, "light");
+                List<double> wind_speed = getDataList(x.id, "wind_speed");
+                List<double> wind_direction = getDataList( x.id, "wind_direction");
+                List<double> battery_level = getDataList( x.id, "battery_level");
                 List<double> co2 = new List<double>();
                 List<double> rain = new List<double>();
-                List<DateTime> TimeStamps = getTimeList(AuthToken, x.id);
+                List<DateTime> TimeStamps = getTimeList( x.id);
                 if (x.model.Equals("fe0b2774-6aba-4544-9961-cd965179e6dd"))
                 {
-                    co2 = getDataList(AuthToken, x.id, "co2");
+                    co2 = getDataList(x.id, "co2");
                 }
                 if (x.model.Equals("c5d9d19f-31c7-4ce6-a5ed-fbd200e100a4"))
                 {
-                    rain = getDataList(AuthToken, x.id, "rain");
+                    rain = getDataList(x.id, "rain");
                 }
                 for (int i = 0; i < soil_moisture.Count; i++)
                 {

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kyeel\\Source\\Repos\\NDSUCapstone2020\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj": {}
+    "C:\\Users\\kyeel\\Documents\\GitHub\\FarmBeatsAccelerator\\API\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kyeel\\Source\\Repos\\NDSUCapstone2020\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj": {
+    "C:\\Users\\kyeel\\Documents\\GitHub\\FarmBeatsAccelerator\\API\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kyeel\\Source\\Repos\\NDSUCapstone2020\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj",
+        "projectUniqueName": "C:\\Users\\kyeel\\Documents\\GitHub\\FarmBeatsAccelerator\\API\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj",
         "projectName": "FarmBeatsAccelerator",
-        "projectPath": "C:\\Users\\kyeel\\Source\\Repos\\NDSUCapstone2020\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj",
+        "projectPath": "C:\\Users\\kyeel\\Documents\\GitHub\\FarmBeatsAccelerator\\API\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\FarmBeatsAccelerator.csproj",
         "packagesPath": "C:\\Users\\kyeel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kyeel\\Source\\Repos\\NDSUCapstone2020\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\obj\\",
+        "outputPath": "C:\\Users\\kyeel\\Documents\\GitHub\\FarmBeatsAccelerator\\API\\FarmBeatsAccelerator\\FarmBeatsAccelerator\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
@@ -45,6 +45,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Decos.Microsoft.Identity.Web": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
             "FluentAssertions": {
               "target": "Package",
               "version": "[5.10.3, )"
