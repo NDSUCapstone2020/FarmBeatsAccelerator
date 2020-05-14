@@ -19,42 +19,12 @@ namespace FarmBeatsAccelerator.Services
     public class SensorServices
     {
         static HttpClient client = new HttpClient();
-        public static string GetAuth()
-        {
-            RestClient client = new RestClient("https://login.microsoftonline.com/52994fa0-e365-4bfd-9b88-a99d83a92b62/oauth2/v2.0/authorize");
-            RestRequest request = new RestRequest() { Method = Method.POST };
-            request.AddParameter("response_type", "code");
-            request.AddParameter("redirect_uri", "https://ndsufarmbeats-api.azurewebsites.net/callback");
-            request.AddParameter("client_id", "30d9bf84-bc24-4cc0-a149-3a298877703d");
-            request.AddParameter("scope", "api://30d9bf84-bc24-4cc0-a149-3a298877703d/sign:in");
-            request.AddParameter("state", "12345");
-            request.AddParameter("response_mode", "query");
-            Console.WriteLine(request.ToString());
-            var response = client.Execute(request);
-            //AuthCode authCode = JsonSerializer.Deserialize<AuthCode>(response.Content);
-            client = new RestClient("https://login.microsoftonline.com/52994fa0-e365-4bfd-9b88-a99d83a92b62/oauth2/v2.0/token");
-            request = new RestRequest() { Method = Method.POST };
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-            request.AddParameter("grant_type", "authorization_code");
-            request.AddParameter("redirect_uri", "https://ndsufarmbeats-api.azurewebsites.net/callback");
-            request.AddParameter("client_id", "30d9bf84-bc24-4cc0-a149-3a298877703d");
-            // request.AddParameter("code", authCode);
-            response = client.Execute(request);
-            Console.WriteLine(response.Content);
-            string json = response.Content.ToString();
-            //Auth auth = JsonSerializer.Deserialize<Auth>(json);
-            string AuthToken = "";
-            //AuthToken = auth.access_token;
-            return AuthToken;
-        }
 
-        public static List<Sensor> GetSensors(string AuthToken)
+        public static List<Sensor> GetSensors()
         {
             var client = new RestClient("https://ndsufarmbeats-api.azurewebsites.net/Sensor");
             client.Timeout = -1;
             var request = new RestRequest(Method.GET);
-            request.AddHeader("Authorization", "Bearer " + AuthToken);
             IRestResponse response = client.Execute(request);
             List<Sensor> returnList = new List<Sensor>();
             SensorMapping SM = JsonSerializer.Deserialize<SensorMapping>(response.Content);
@@ -72,9 +42,9 @@ namespace FarmBeatsAccelerator.Services
 
         }
 
-        public static Sensor UpdateLocation(string AuthToken, string SensorName, double longitude, double latitude)
+        public static Sensor UpdateLocation( string SensorName, double longitude, double latitude)
         {
-            List<Sensor> findSensor = GetSensors(AuthToken);
+            List<Sensor> findSensor = GetSensors();
             Sensor updateSensor = new Sensor();
             foreach (Sensor x in findSensor)
             {
@@ -89,14 +59,12 @@ namespace FarmBeatsAccelerator.Services
             //Add a put request to Sensor to update the location of the sensor
             return updateSensor;
         }
-        static List<double> getDataList(string AuthToken, String id, string value)
+        static List<double> getDataList(String id, string value)
         {
             var client = new RestClient("https://ndsufarmbeats-api.azurewebsites.net/Telemetry");
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Authorization", "Bearer " + AuthToken);
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Cookie", "AppServiceAuthSession=WI9t5DX8yaydnIOu3TbF/yzFkftvQ7W53n4YbnQ3tCSclMMjRR2KekmyDvE3BzEjQYzqQEAmdbfIFIuUpGdXgNQWapMIDyl8cA51B6EzPvRcoTQ1LHOgpJ1dse5APKcSQs6XXXlwuIL9++AokoTiLbJgz66i7SEJGYf44mDdusOPDa7tWo8Yt7MxznlTXWENBaUk4Ci6bnJXLApF1BWNpnX2tppgx87jbTyzzFlNSThMFe/dUlRG+Fye5YZVA93x0gwiGomMkpcnxocCi9q/ojy7dkQ9veh/kNvWhJ56SD/22rmKeyYajsF0z02rnY+ynYsdOhAa2EBWH2Nx9PtUcmXmIcdHbKvz2SRwgHKqfVNdlOm3NLXCUomYFv1+gDKt9PDjTA6jm+/ZS2t8hCk2DcQdbnqiMtTcqmkyqNcfOEHGfVeZUIL8PuxuM1nQ4izFfHaqWVCcM6hk1+8XK/L72vjOh3O9w8D8D4VyZ47GL66P/6i3V1xVkuuDSJLRoyA+FWtspase2KuvplUq6RVADhNWtBVRngqGHhnnOtYLSYk5m6tKd59Bja180m02TGxlP6jmfkw05TM8AwBFYYgDGFZOE3k/Mdq1MURxplxUEm62+GvBvp1HbbiZKW4UvMfYNmKn5YnuR62tDBHhEwzbh2Kphr2FhmRuYNWeFw0xpCAX6rB9vXG5zl7dLfRcma3urdbp2pEIZcVDJ3GINAoukfFqTgy5/ibTX4ZImyaOsdEs4n45IRK7qu6FhI9OCi2jESUh2XmF6fSYxX/D+lPt9cMXpSq7xin6NDQZqF5RZklW6gr/vcn194hJtzriyPqx7mIv8x1SYp0XAg4fj6vVypJ5ww95FFGGuDvPNzqBSMICGY4KA3O4UpQrg5+OtpKKBdVXHHpm2Tx5cTkOhREEqIrWN1yIQRorxVArChKsy5cQj87eBHI475zq+uirUMeRB2r5XZz1M++BeAVk+O0d/ek/NR1KgMb6ZjzkT56oiSI3niZ8FrBkMVr4/O4qXntU6S8HkAK/yvzZ9IPrKrRL3w==");
             request.AddParameter("application/json", "{\r\n  \"sensorId\": \"" + id + "\",\r\n  \"searchSpan\": {\r\n    \"from\": \"2020-04-10T17:02:53.969Z\",\r\n    \"to\": \"2020-04-29T17:02:53.970Z\"\r\n  },\r\n  \"projectedProperties\": [\r\n    {\r\n      \"name\":\"" + value + "\",\r\n      \"type\":\"Double\"\r\n    }\r\n  ]\r\n}", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
             List<double> returnList = new List<double>();
@@ -111,14 +79,12 @@ namespace FarmBeatsAccelerator.Services
             }
             return returnList;
         }
-        static List<DateTime> getTimeList(string AuthToken, String id)
+        static List<DateTime> getTimeList(String id)
         {
             var client = new RestClient("https://ndsufarmbeats-api.azurewebsites.net/Telemetry");
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Authorization", "Bearer " + AuthToken);
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Cookie", "AppServiceAuthSession=WI9t5DX8yaydnIOu3TbF/yzFkftvQ7W53n4YbnQ3tCSclMMjRR2KekmyDvE3BzEjQYzqQEAmdbfIFIuUpGdXgNQWapMIDyl8cA51B6EzPvRcoTQ1LHOgpJ1dse5APKcSQs6XXXlwuIL9++AokoTiLbJgz66i7SEJGYf44mDdusOPDa7tWo8Yt7MxznlTXWENBaUk4Ci6bnJXLApF1BWNpnX2tppgx87jbTyzzFlNSThMFe/dUlRG+Fye5YZVA93x0gwiGomMkpcnxocCi9q/ojy7dkQ9veh/kNvWhJ56SD/22rmKeyYajsF0z02rnY+ynYsdOhAa2EBWH2Nx9PtUcmXmIcdHbKvz2SRwgHKqfVNdlOm3NLXCUomYFv1+gDKt9PDjTA6jm+/ZS2t8hCk2DcQdbnqiMtTcqmkyqNcfOEHGfVeZUIL8PuxuM1nQ4izFfHaqWVCcM6hk1+8XK/L72vjOh3O9w8D8D4VyZ47GL66P/6i3V1xVkuuDSJLRoyA+FWtspase2KuvplUq6RVADhNWtBVRngqGHhnnOtYLSYk5m6tKd59Bja180m02TGxlP6jmfkw05TM8AwBFYYgDGFZOE3k/Mdq1MURxplxUEm62+GvBvp1HbbiZKW4UvMfYNmKn5YnuR62tDBHhEwzbh2Kphr2FhmRuYNWeFw0xpCAX6rB9vXG5zl7dLfRcma3urdbp2pEIZcVDJ3GINAoukfFqTgy5/ibTX4ZImyaOsdEs4n45IRK7qu6FhI9OCi2jESUh2XmF6fSYxX/D+lPt9cMXpSq7xin6NDQZqF5RZklW6gr/vcn194hJtzriyPqx7mIv8x1SYp0XAg4fj6vVypJ5ww95FFGGuDvPNzqBSMICGY4KA3O4UpQrg5+OtpKKBdVXHHpm2Tx5cTkOhREEqIrWN1yIQRorxVArChKsy5cQj87eBHI475zq+uirUMeRB2r5XZz1M++BeAVk+O0d/ek/NR1KgMb6ZjzkT56oiSI3niZ8FrBkMVr4/O4qXntU6S8HkAK/yvzZ9IPrKrRL3w==");
             request.AddParameter("application/json", "{\r\n  \"sensorId\": \"" + id + "\",\r\n  \"searchSpan\": {\r\n    \"from\": \"2020-04-10T17:02:53.969Z\",\r\n    \"to\": \"2020-04-29T17:02:53.970Z\"\r\n  },\r\n  \"projectedProperties\": [\r\n    {\r\n      \"name\":\"" + "soil_temperature" + "\",\r\n      \"type\":\"Double\"\r\n    }\r\n  ]\r\n}", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
             List<DateTime> returnList = new List<DateTime>();
@@ -195,262 +161,4 @@ namespace FarmBeatsAccelerator.Services
         }
     }
 }
-    //services after this point only work with the resaerch preview
-//        public static List<Sensor> getSensorData(string ID)
-//        {
-//            string connectionString = AppSettings.LoadAppSettings().StorageConnectionString;
-//            CloudStorageAccount storageAccount;
-//            try
-//            {
-//                storageAccount = CloudStorageAccount.Parse(connectionString);
-//            }
-//            catch (FormatException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the application.");
-//                throw;
-//            }
-//            catch (ArgumentException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.");
-//                Console.ReadLine();
-//                throw;
-//            }
-//            string name = "AgSensorBoxData" + ID;
-//            DBCollection<SensorDataEntity> DataDB = new DBCollection<SensorDataEntity>();
-//            DBCollection<SensorLocationEntity> LocationDB = new DBCollection<SensorLocationEntity>();
-//            CloudTable dataTable = DataDB.GetTable(name, storageAccount);
-//            CloudTable locationTable = LocationDB.GetTable("SensorLocation", storageAccount);
-//            List<SensorDataEntity> sensorData = DataDB.GetAll(dataTable);
-//            List<SensorLocationEntity> sensorLocation = LocationDB.GetAll(locationTable);
-//            List<Sensor> SD = new List<Sensor>();
-
-//            foreach (SensorDataEntity x in sensorData)
-//            {
-//                Sensor temp = new Sensor();
-//                temp.soilMoisture = x.CompChannel3;
-//                temp.soilTemp = x.CompChannel4;
-//                temp.ambTemp = x.CompChannel5;
-//                temp.light = x.CompChannel9;
-//                temp.windSpeed = x.CompChannel10;
-//                temp.windDirection = x.CompChannel11;
-//                temp.Timestamp = x.TimeStamp;
-//                temp.SkuId = x.SkuId;
-//                temp.ambHumidity = x.CompChannel6;
-//                temp.atmPressure = x.CompChannel7;
-//                temp.CO2 = x.CompChannel8;
-//                //temp.Rain = x.CompChannel9;
-//                temp.BME280Temp = x.CompChannel0;
-//                temp.BME280Humidity = x.CompChannel1;
-//                temp.BME280Pressure = x.CompChannel2;
-//                //temp.digitalSensor = x.CompChannel13;
-//                temp.Battery = x.CompChannel12;
-
-//                foreach (SensorLocationEntity z in sensorLocation)
-//                {
-//                    Console.WriteLine(z.ToString());
-//                    if (temp.SkuId.Equals(z.SkuId))
-//                    {
-//                        temp.longitude = z.longitude;
-//                        temp.latitude = z.latitude;
-//                    }
-//                }
-
-//                SD.Add(temp);
-
-//            }
-//            return SD;
-//        }
-//        public static List<Sensor> getFarmData(string farmName)
-//        {
-//            string connectionString = AppSettings.LoadAppSettings().StorageConnectionString;
-//            CloudStorageAccount storageAccount;
-//            try
-//            {
-//                storageAccount = CloudStorageAccount.Parse(connectionString);
-//            }
-//            catch (FormatException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the application.");
-//                throw;
-//            }
-//            catch (ArgumentException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.");
-//                Console.ReadLine();
-//                throw;
-//            }
-//            //
-//            DBCollection<IdFinderEntity> IdentityDB = new DBCollection<IdFinderEntity>();
-//            DBCollection<SensorDataEntity> DataDB = new DBCollection<SensorDataEntity>();
-//            DBCollection<SensorLocationEntity> LocationDB = new DBCollection<SensorLocationEntity>();
-//            CloudTable idTable = IdentityDB.GetTable("IdFinder", storageAccount);
-//            List<IdFinderEntity> IdentityData = IdentityDB.GetAll(idTable);
-//            CloudTable locationTable = LocationDB.GetTable("SensorLocation", storageAccount);
-//            List<SensorLocationEntity> sensorLocation = LocationDB.GetAll(locationTable);
-//            List<Sensor> FD = new List<Sensor>();
-
-//            foreach (IdFinderEntity y in IdentityData)
-//            {
-//                if (y.PartitionKey.Equals(farmName))
-//                {
-//                    string ID = y.RowKey;
-//                    string name = "AgSensorBoxData" + ID;
-//                    CloudTable dataTable = DataDB.GetTable(name, storageAccount);
-//                    List<SensorDataEntity> sensorData = DataDB.GetAll(dataTable);
-
-
-
-//                    foreach (SensorDataEntity x in sensorData)
-//                    {
-//                        Sensor temp = new Sensor();
-//                        temp.soilMoisture = x.CompChannel3;
-//                        temp.soilTemp = x.CompChannel4;
-//                        temp.ambTemp = x.CompChannel5;
-//                        temp.light = x.CompChannel9;
-//                        temp.windSpeed = x.CompChannel10;
-//                        temp.windDirection = x.CompChannel11;
-//                        temp.Timestamp = x.TimeStamp;
-//                        temp.SkuId = x.SkuId;
-//                        temp.ambHumidity = x.CompChannel6;
-//                        temp.atmPressure = x.CompChannel7;
-//                        temp.CO2 = x.CompChannel8;
-//                        //temp.Rain = x.CompChannel9;
-//                        temp.BME280Temp = x.CompChannel0;
-//                        temp.BME280Humidity = x.CompChannel1;
-//                        temp.BME280Pressure = x.CompChannel2;
-//                        //temp.digitalSensor = x.CompChannel13;
-//                        temp.Battery = x.CompChannel12;
-
-//                        foreach (SensorLocationEntity z in sensorLocation)
-//                        {
-//                            Console.WriteLine(z.ToString());
-//                            if (temp.SkuId.Equals(z.SkuId))
-//                            {
-//                                temp.longitude = z.longitude;
-//                                temp.latitude = z.latitude;
-//                            }
-//                        }
-
-//                        FD.Add(temp);
-
-//                    }
-//                }
-//            }
-
-//            return FD;
-//        }
-//        public static List<Sensor> ApiCall()
-//        {
-//            List<Sensor> returnList = new List<Sensor>();
-
-
-//            return returnList;
-//        }
-//        public static List<Sensor> getAllData()
-//        {
-//            string connectionString = AppSettings.LoadAppSettings().StorageConnectionString;
-//            CloudStorageAccount storageAccount;
-//            try
-//            {
-//                storageAccount = CloudStorageAccount.Parse(connectionString);
-//            }
-//            catch (FormatException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the application.");
-//                throw;
-//            }
-//            catch (ArgumentException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.");
-//                Console.ReadLine();
-//                throw;
-//            }
-//            //
-//            DBCollection<IdFinderEntity> IdentityDB = new DBCollection<IdFinderEntity>();
-//            DBCollection<SensorDataEntity> DataDB = new DBCollection<SensorDataEntity>();
-//            DBCollection<SensorLocationEntity> LocationDB = new DBCollection<SensorLocationEntity>();
-//            CloudTable idTable = IdentityDB.GetTable("IdFinder", storageAccount);
-//            List<IdFinderEntity> IdentityData = IdentityDB.GetAll(idTable);
-//            CloudTable locationTable = LocationDB.GetTable("SensorLocation", storageAccount);
-//            List<SensorLocationEntity> sensorLocation = LocationDB.GetAll(locationTable);
-//            List<Sensor> FD = new List<Sensor>();
-
-//            foreach (IdFinderEntity y in IdentityData)
-//            {
-
-//                string ID = y.RowKey;
-//                string name = "AgSensorBoxData" + ID;
-//                CloudTable dataTable = DataDB.GetTable(name, storageAccount);
-//                List<SensorDataEntity> sensorData = DataDB.GetAll(dataTable);
-
-
-
-//                foreach (SensorDataEntity x in sensorData)
-//                {
-//                    Sensor temp = new Sensor();
-//                    temp.soilMoisture = x.CompChannel3;
-//                    temp.soilTemp = x.CompChannel4;
-//                    temp.ambTemp = x.CompChannel5;
-//                    temp.light = x.CompChannel9;
-//                    temp.windSpeed = x.CompChannel10;
-//                    temp.windDirection = x.CompChannel11;
-//                    temp.Timestamp = x.TimeStamp;
-//                    temp.SkuId = x.SkuId;
-//                    temp.ambHumidity = x.CompChannel6;
-//                    temp.atmPressure = x.CompChannel7;
-//                    temp.CO2 = x.CompChannel8;
-//                    //temp.Rain = x.CompChannel9;
-//                    temp.BME280Temp = x.CompChannel0;
-//                    temp.BME280Humidity = x.CompChannel1;
-//                    temp.BME280Pressure = x.CompChannel2;
-//                    //temp.digitalSensor = x.CompChannel13;
-//                    temp.Battery = x.CompChannel12;
-//                    foreach (SensorLocationEntity z in sensorLocation)
-//                    {
-//                        Console.WriteLine(z.ToString());
-//                        if (temp.SkuId.Equals(z.SkuId))
-//                        {
-//                            temp.longitude = z.longitude;
-//                            temp.latitude = z.latitude;
-//                        }
-//                    }
-
-//                    FD.Add(temp);
-
-//                }
-//            }
-
-
-//            return FD;
-//        }
-//        public static void updateLocation(double lat, double lon, string id)
-//        {
-//            string connectionString = AppSettings.LoadAppSettings().StorageConnectionString;
-//            CloudStorageAccount storageAccount;
-//            try
-//            {
-//                storageAccount = CloudStorageAccount.Parse(connectionString);
-//            }
-//            catch (FormatException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the application.");
-//                throw;
-//            }
-//            catch (ArgumentException)
-//            {
-//                Console.WriteLine("Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.");
-//                Console.ReadLine();
-//                throw;
-//            }
-//            DBCollection<SensorLocationEntity> LocationDB = new DBCollection<SensorLocationEntity>();
-//            CloudTable locationTable = LocationDB.GetTable("SensorLocation", storageAccount);
-//            SensorLocationEntity temp = LocationDB.GetBySkuId(id, locationTable).ElementAt(0);
-//            temp.latitude = lat;
-//            temp.longitude = lon;
-//            LocationDB.Update(temp, locationTable);
-//        }
-
-
-//    }
-//}
-
+   
